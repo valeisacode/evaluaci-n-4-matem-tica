@@ -1,207 +1,61 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[codz]
-*$py.class
+import random
+import numpy as np
+import matplotlib.pyplot as plt
 
-# C extensions
-*.so
+def pedir_numeros():
+    while True:
+        entrada = input("Ingrese entre 1 y 30 números (1-105) separados por espacios: ")
+        try:
+            numeros = list(map(int, entrada.strip().split()))
+            if 1 <= len(numeros) <= 30 and all(1 <= n <= 105 for n in numeros):
+                return numeros
+            else:
+                print("Debe ingresar entre 1 y 30 números, todos entre 1 y 100.")
+        except ValueError:
+            print("Entrada inválida. Ingrese solo números enteros separados por espacios.")
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+def generar_tabla_sudoku(numeros):
+    
+    tabla = np.zeros((9,9), dtype=int)
+    
+    for i in range(9):
+        for j in range(9):
+            tabla[i][j] = random.choice(numeros)
+    return tabla
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+def mostrar_tabla(tabla):
+    print("Tabla generada (formato Sudoku 9x9):")
+    for i, fila in enumerate(tabla):
+        fila_str = " ".join(f"{num:3d}" for num in fila)
+        print(fila_str)
+        if (i+1) % 3 == 0 and i != 8:
+            print("-" * 29)
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+def mostrar_imagen(tabla):
+    fig, ax = plt.subplots(figsize=(6,6))
+    ax.matshow(np.ones((9,9)), cmap="Pastel1")  
+    for (i, j), val in np.ndenumerate(tabla):
+        ax.text(j, i, str(val), va='center', ha='center', fontsize=14)
+    
+    for k in range(10):
+        lw = 2 if k % 3 == 0 else 1
+        ax.axhline(k-0.5, color='black', linewidth=lw)
+        ax.axvline(k-0.5, color='black', linewidth=lw)
+    ax.axis('off')
+    plt.title("Rotativa")
+    plt.show()
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py.cover
-.hypothesis/
-.pytest_cache/
-cover/
+def main():
+    numeros = pedir_numeros()
+    tabla = generar_tabla_sudoku(numeros)
+    mostrar_tabla(tabla)
 
-# Translations
-*.mo
-*.pot
+    ver_imagen = input("¿Desea ver una imagen del resultado? (s/n): ").strip().lower()
+    if ver_imagen == 's':
+        mostrar_imagen(tabla)
+    else:
+        print("Programa finalizado.")
 
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
+if __name__ == "__main__":
+    main()
 
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-.pybuilder/
-target/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# IPython
-profile_default/
-ipython_config.py
-
-# pyenv
-#   For a library or package, you might want to ignore these files since the code is
-#   intended to run in multiple environments; otherwise, check them in:
-# .python-version
-
-# pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don't work, or not
-#   install all needed dependencies.
-#Pipfile.lock
-
-# UV
-#   Similar to Pipfile.lock, it is generally recommended to include uv.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
-#uv.lock
-
-# poetry
-#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
-#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
-#poetry.lock
-#poetry.toml
-
-# pdm
-#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
-#   pdm recommends including project-wide configuration in pdm.toml, but excluding .pdm-python.
-#   https://pdm-project.org/en/latest/usage/project/#working-with-version-control
-#pdm.lock
-#pdm.toml
-.pdm-python
-.pdm-build/
-
-# pixi
-#   Similar to Pipfile.lock, it is generally recommended to include pixi.lock in version control.
-#pixi.lock
-#   Pixi creates a virtual environment in the .pixi directory, just like venv module creates one
-#   in the .venv directory. It is recommended not to include this directory in version control.
-.pixi
-
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
-__pypackages__/
-
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
-
-# SageMath parsed files
-*.sage.py
-
-# Environments
-.env
-.envrc
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# pytype static type analyzer
-.pytype/
-
-# Cython debug symbols
-cython_debug/
-
-# PyCharm
-#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
-#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
-#  and can be added to the global gitignore or merged into this file.  For a more nuclear
-#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
-
-# Abstra
-# Abstra is an AI-powered process automation framework.
-# Ignore directories containing user credentials, local state, and settings.
-# Learn more at https://abstra.io/docs
-.abstra/
-
-# Visual Studio Code
-#  Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore 
-#  that can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
-#  and can be added to the global gitignore or merged into this file. However, if you prefer, 
-#  you could uncomment the following to ignore the entire vscode folder
-# .vscode/
-
-# Ruff stuff:
-.ruff_cache/
-
-# PyPI configuration file
-.pypirc
-
-# Cursor
-#  Cursor is an AI-powered code editor. `.cursorignore` specifies files/directories to
-#  exclude from AI features like autocomplete and code analysis. Recommended for sensitive data
-#  refer to https://docs.cursor.com/context/ignore-files
-.cursorignore
-.cursorindexingignore
-
-# Marimo
-marimo/_static/
-marimo/_lsp/
-__marimo__/
