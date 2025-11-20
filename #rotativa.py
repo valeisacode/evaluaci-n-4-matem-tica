@@ -1,21 +1,25 @@
 #rotativa
 import random
-import math
 import numpy as np
 import matplotlib.pyplot as plt
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 
 
-def generar_tabla_sudoku_trig(numeros):
+def generar_tabla_sudoku(numeros):
     tabla = np.zeros((9, 9), dtype=int)
+    contador = {num: 0 for num in numeros}
+    max_repeticiones = 2  # Cambiar a 1 para solo una repetición máxima
+
     for i in range(9):
         for j in range(9):
-            num = random.choice(numeros)
-            # Calcular seno y escalar al rango 1-105
-            val = int((math.sin(math.radians(num)) + 1) * 52.5)
-            val = max(1, min(val, 105))
-            tabla[i][j] = val
+            candidatos = [num for num in numeros if contador[num] < max_repeticiones]
+            if not candidatos:
+                # Si no quedan candidatos permitidos, romper la generación aquí
+                break
+            eleccion = random.choice(candidatos)
+            tabla[i][j] = eleccion
+            contador[eleccion] += 1
     return tabla
 
 
@@ -63,7 +67,7 @@ def on_generar():
         return
 
     global tabla_generada
-    tabla_generada = generar_tabla_sudoku_trig(numeros)
+    tabla_generada = generar_tabla_sudoku(numeros)
     texto_tabla = mostrar_tabla_texto(tabla_generada)
     output_text.config(state='normal')
     output_text.delete('1.0', tk.END)
@@ -79,22 +83,28 @@ def on_mostrar_imagen():
         mostrar_imagen(tabla_generada)
 
 
+# Configuración de la ventana principal
 root = tk.Tk()
-root.title("Generador de tabla estilo Sudoku con función trigonométrica")
+root.title("Generador de tabla estilo Sudoku")
 
+# Entrada de números
 tk.Label(root, text="Ingrese entre 1 y 30 números (1-105) separados por espacios:").pack(padx=10, pady=5)
 entrada_numeros = tk.Entry(root, width=50)
 entrada_numeros.pack(padx=10, pady=5)
 
-btn_generar = tk.Button(root, text="Generar tabla con seno", command=on_generar)
+# Botón para generar la tabla
+btn_generar = tk.Button(root, text="Generar tabla", command=on_generar)
 btn_generar.pack(padx=10, pady=5)
 
+# Área de texto para mostrar la tabla
 output_text = scrolledtext.ScrolledText(root, width=35, height=15, state='disabled', font=("Consolas", 12))
 output_text.pack(padx=10, pady=5)
 
+# Botón para mostrar la imagen
 btn_imagen = tk.Button(root, text="Mostrar imagen del resultado", command=on_mostrar_imagen)
 btn_imagen.pack(padx=10, pady=5)
 
-tabla_generada = None
+tabla_generada = None  # Variable global para almacenar la tabla actual
 
 root.mainloop()
+
